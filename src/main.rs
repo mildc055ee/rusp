@@ -1,16 +1,6 @@
-mod data;
-mod parser;
-use parser::Parser;
-use std::io;
+pub mod data;
+pub mod func;
+//mod env;
 
 fn main() {
-    let mut input = String::new();
-    io::stdin().read_line(&mut input).ok();
-
-    let mut p = Parser::new(&input.trim().to_string());
-    p.lex().ok();
-
-    for node in p.ast {
-        println!("{}", node);
-    }
 }
