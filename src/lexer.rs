@@ -27,22 +27,22 @@ impl Token {
 #[derive(Debug)]
 pub struct Lexer<'a> {
     src: Peekable<Chars<'a>>,
-    token_list: Vec<Token>
+    token_stream: Vec<Token>
 }
 
 impl<'a> Lexer<'a> {
     pub fn new(src: &'a str) -> Lexer<'a> {
         Lexer{
             src: src.chars().peekable(),
-            token_list: vec![]
+            token_stream: vec![]
         }
     }
 
     pub fn lex(&mut self) -> Result<&Vec<Token>, String> {
         while let Some(c) = self.src.next() {
             match c {
-                '(' => self.token_list.push(Token::new(TokenKind::LParen, "(".to_string())),
-                ')' => self.token_list.push(Token::new(TokenKind::RParen, ")".to_string())),
+                '(' => self.token_stream.push(Token::new(TokenKind::LParen, "(".to_string())),
+                ')' => self.token_stream.push(Token::new(TokenKind::RParen, ")".to_string())),
                 n if c.is_numeric() => {
                     let mut num = String::new();
                     num.push(n);
@@ -55,7 +55,7 @@ impl<'a> Lexer<'a> {
                             break;
                         }
                     }
-                    self.token_list.push(Token::new(TokenKind::Int, num))
+                    self.token_stream.push(Token::new(TokenKind::Int, num))
                 },
                 _w if c.is_whitespace() => continue,
                 s if c.is_ascii() => {
@@ -70,12 +70,12 @@ impl<'a> Lexer<'a> {
                             self.src.next();
                         }
                     }
-                    self.token_list.push(Token::new(TokenKind::Symbol, symbol))
+                    self.token_stream.push(Token::new(TokenKind::Symbol, symbol))
                 },
                 _ => return Err("invalid character detected.".to_string())
             };
         }
 
-        Ok(&self.token_list)
+        Ok(&self.token_stream)
     }
 }
